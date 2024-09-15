@@ -1,51 +1,35 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
 import { invoke } from "@tauri-apps/api/tauri";
+import { Input, Button, Box, Spacer, VStack } from "@kuma-ui/core";
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+  const saveApiKey: React.FormEventHandler<HTMLFormElement> = async (e) => {
+    e.preventDefault();
+    const form = new FormData(e.currentTarget);
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-    setGreetMsg(await invoke("greet", { name }));
+    const token = form.get("token") || "";
+    const secret = form.get("secret") || "";
+
+    await invoke("save_api_key", {"api_key": { token, secret }});
   }
 
   return (
-    <div className="container">
-      <h1>Welcome to Tauri!</h1>
-
-      <div className="row">
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit" className="uk-button uk-button-default">Greet</button>
-      </form>
-
-      <p>{greetMsg}</p>
-    </div>
+    <Box margin="2rem">
+      <VStack as="form" onSubmit={saveApiKey}>
+        <Box>
+          <label htmlFor="token">Token: </label>
+          <Input name="token" width="20rem" height="1.5rem" className="uk-input" />
+        </Box>
+        <Spacer size="0.5rem" />
+        <Box>
+          <label htmlFor="secret">Secret: </label>
+          <Input name="secret" width="20rem" height="1.5rem" className="uk-input" />
+        </Box>
+        <Spacer size="0.5rem" />
+        <Box>
+          <Button type="submit" className="uk-button uk-button-primary uk-button-small">Submit</Button>
+        </Box>
+      </VStack>
+    </Box>
   );
 }
 

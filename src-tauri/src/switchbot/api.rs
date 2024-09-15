@@ -29,8 +29,6 @@ pub(crate) fn create_header(token: &str, secret: &str) -> HeaderMap {
     headers
 }
 
-use serde::{Deserialize, Serialize};
-
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub(crate) struct Device {
@@ -65,7 +63,10 @@ struct GetDeviceResponse {
     message: String,
 }
 
-pub(crate) async fn get_devices(token: &str, secret: &str) -> Result<GetDeviceResponseBody, Error> {
+pub async fn get_devices(
+    token: &str,
+    secret: &str,
+) -> Result<GetDeviceResponseBody, Box<dyn Error>> {
     let url = format!("{}/devices", SWITCHBOT_API_URL);
     let headers = create_header(token, secret);
     let client = reqwest::Client::new();
@@ -76,17 +77,18 @@ pub(crate) async fn get_devices(token: &str, secret: &str) -> Result<GetDeviceRe
     Ok(get_device_response.body)
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize, strum::EnumString)]
 pub(crate) enum Parameter {
-    Default = "default",
+    #[strum(serialize = "default")]
+    Default,
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub(crate) struct CommandBody {
-    command: String,
-    command_type: String,
-    parameter: Parameter,
+    pub(crate) command: String,
+    pub(crate) command_type: String,
+    pub(crate) parameter: Parameter,
 }
 
 pub(crate) async fn send_command(
@@ -94,7 +96,7 @@ pub(crate) async fn send_command(
     secret: &str,
     device_id: &str,
     body: CommandBody,
-) -> Result<(), Error> {
+) -> Result<(), Box<dyn Error>> {
     let url = format!("{}/devices/{}/command", SWITCHBOT_API_URL, device_id);
     let headers = create_header(token, secret);
     let client = reqwest::Client::new();
