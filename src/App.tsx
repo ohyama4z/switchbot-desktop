@@ -1,34 +1,25 @@
 import { invoke } from "@tauri-apps/api/tauri";
-import { Input, Button, Box, Spacer, VStack } from "@kuma-ui/core";
+import { Button, Box } from "@kuma-ui/core";
+import { useModal } from "./hooks/useModal.ts";
+import Form from "./components/Form.tsx";
+import Modal from "./components/Modal.tsx";
 
 function App() {
-  const saveApiKey: React.FormEventHandler<HTMLFormElement> = async (e) => {
-    e.preventDefault();
-    const form = new FormData(e.currentTarget);
+  const { isModalOpen, openModal, closeModal } = useModal();
 
-    const token = form.get("token") || "";
-    const secret = form.get("secret") || "";
-
+  const saveApiKey = async (token: string, secret: string) => {
     await invoke("save_api_key", {"api_key": { token, secret }});
   }
 
   return (
-    <Box margin="2rem">
-      <VStack as="form" onSubmit={saveApiKey}>
-        <Box>
-          <label htmlFor="token">Token: </label>
-          <Input name="token" width="20rem" height="1.5rem" className="uk-input" />
-        </Box>
-        <Spacer size="0.5rem" />
-        <Box>
-          <label htmlFor="secret">Secret: </label>
-          <Input name="secret" width="20rem" height="1.5rem" className="uk-input" />
-        </Box>
-        <Spacer size="0.5rem" />
-        <Box>
-          <Button type="submit" className="uk-button uk-button-primary uk-button-small">Submit</Button>
-        </Box>
-      </VStack>
+    <Box minHeight="100vh" width="100%">
+      <Modal isOpen={isModalOpen} onClose={closeModal}>
+        <Form saveApiKey={saveApiKey} />
+      </Modal>
+      
+      <Box padding="5%">
+        <Button className="button" onClick={openModal} >Open Modal</Button>
+      </Box>
     </Box>
   );
 }
