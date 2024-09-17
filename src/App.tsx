@@ -1,8 +1,10 @@
 import { invoke } from "@tauri-apps/api/tauri";
-import { Button, Box } from "@kuma-ui/core";
+import { Box } from "@kuma-ui/core";
 import { useModal } from "./hooks/useModal.ts";
 import Form from "./components/Form.tsx";
 import Modal from "./components/Modal.tsx";
+import { faCog } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 function App() {
   const { isModalOpen, openModal, closeModal } = useModal();
@@ -16,9 +18,18 @@ function App() {
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <Form saveApiKey={saveApiKey} />
       </Modal>
-      
+
+      <Box
+        position="absolute"
+        top="30px" right="30px"
+        as="span" onClick={openModal}
+        cursor="pointer"
+        _hover={{ color: "hsl(171, 100%, 41%)" }}
+      >
+        <FontAwesomeIcon icon={faCog} className="icon" />
+      </Box>
+
       <Box padding="5%">
-        <Button className="button" onClick={openModal} >Open Modal</Button>
       </Box>
     </Box>
   );
