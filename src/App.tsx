@@ -5,23 +5,37 @@ import Form from "./components/Form.tsx";
 import Modal from "./components/Modal.tsx";
 import { faCog } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const { isModalOpen, openModal, closeModal } = useModal();
 
   const saveApiKey = async (token: string, secret: string) => {
-    await invoke("save_api_key", {"api_key": { token, secret }});
+    try {
+      await invoke("save_api_key", { "api_key": { token, secret } });
+      toast.success("トークンの保存に成功しました!");
+      setTimeout(closeModal, 750);
+    } catch (e) {
+      toast.error("トークンの保存に失敗しました");
+    }
   }
 
   return (
     <Box minHeight="100vh" width="100%">
+      <ToastContainer
+        position="top-center"
+        closeOnClick
+        theme="colored"
+        autoClose={2000}
+      />
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <Form saveApiKey={saveApiKey} />
       </Modal>
 
       <Box
         position="absolute"
-        top="30px" right="30px"
+        top="2rem" right="2rem"
         as="span" onClick={openModal}
         cursor="pointer"
         _hover={{ color: "hsl(171, 100%, 41%)" }}

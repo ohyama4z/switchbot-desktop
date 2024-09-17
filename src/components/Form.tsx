@@ -28,7 +28,7 @@ export default function Form({ saveApiKey }: Props) {
       <Spacer size="0.5rem" />
       <Box>
         <Flex flexDirection="row-reverse">
-          <Button type="submit" className="button is-primary">Submit</Button>
+          <Button type="submit" className="button is-primary">Save</Button>
         </Flex>
       </Box>
     </VStack>
