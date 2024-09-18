@@ -31,28 +31,28 @@ pub(crate) fn create_header(token: &str, secret: &str) -> HeaderMap {
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub(crate) struct Device {
-    device_id: String,
-    device_name: String,
-    device_type: String,
-    hub_device_id: String,
-    enable_cloud_service: Option<bool>,
+pub struct Device {
+    pub device_id: String,
+    pub device_name: String,
+    pub device_type: String,
+    pub hub_device_id: String,
+    pub enable_cloud_service: Option<bool>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub(crate) struct InfraredRemote {
-    device_id: String,
-    device_name: String,
-    hub_device_id: String,
-    remote_type: String,
+pub struct InfraredRemote {
+    pub device_id: String,
+    pub device_name: String,
+    pub hub_device_id: String,
+    pub remote_type: String,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
-struct GetDeviceResponseBody {
-    device_list: Vec<Device>,
-    inframed_remote_list: Vec<InfraredRemote>,
+pub struct GetDeviceResponseBody {
+    pub device_list: Vec<Device>,
+    pub infrared_remote_list: Vec<InfraredRemote>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]

@@ -1,15 +1,17 @@
 import { invoke } from "@tauri-apps/api/tauri";
 import { Box } from "@kuma-ui/core";
-import { useModal } from "./hooks/useModal.ts";
-import Form from "./components/Form.tsx";
-import Modal from "./components/Modal.tsx";
 import { faCog } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useModal } from "./hooks/useModal.ts";
+import Form from "./components/Form.tsx";
+import Modal from "./components/Modal.tsx";
+import { useDevices } from "./hooks/useDevices.ts";
 
 function App() {
   const { isModalOpen, openModal, closeModal } = useModal();
+  const devices = useDevices();
 
   const saveApiKey = async (token: string, secret: string) => {
     try {
@@ -17,6 +19,7 @@ function App() {
       toast.success("トークンの保存に成功しました!");
       setTimeout(closeModal, 750);
     } catch (e) {
+      console.error(e);
       toast.error("トークンの保存に失敗しました");
     }
   }
@@ -34,9 +37,11 @@ function App() {
       </Modal>
 
       <Box
+        as="span"
         position="absolute"
-        top="2rem" right="2rem"
-        as="span" onClick={openModal}
+        top="2rem"
+        right="2rem"
+        onClick={openModal}
         cursor="pointer"
         _hover={{ color: "hsl(171, 100%, 41%)" }}
       >
@@ -44,6 +49,7 @@ function App() {
       </Box>
 
       <Box padding="5%">
+        
       </Box>
     </Box>
   );

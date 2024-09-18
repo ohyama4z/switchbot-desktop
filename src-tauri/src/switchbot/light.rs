@@ -2,13 +2,13 @@ use crate::switchbot::api::{send_command, CommandBody, Parameter};
 
 #[derive(Debug)]
 pub struct Light {
-    device_id: String,
     pub name: String,
 }
 
 impl Light {
-    pub async fn turnOn(
+    pub async fn turn_on(
         &self,
+        device_id: &str,
         token: &str,
         secret: &str,
     ) -> Result<(), Box<dyn std::error::Error>> {
@@ -18,12 +18,13 @@ impl Light {
             parameter: Parameter::Default,
         };
 
-        send_command(token, secret, &self.device_id, command_body).await?;
+        send_command(token, secret, device_id, command_body).await?;
         Ok(())
     }
 
-    pub async fn turnOff(
+    pub async fn turn_off(
         &self,
+        device_id: &str,
         token: &str,
         secret: &str,
     ) -> Result<(), Box<dyn std::error::Error>> {
@@ -33,7 +34,7 @@ impl Light {
             parameter: Parameter::Default,
         };
 
-        send_command(token, secret, &self.device_id, command_body).await?;
+        send_command(token, secret, device_id, command_body).await?;
         Ok(())
     }
 }
