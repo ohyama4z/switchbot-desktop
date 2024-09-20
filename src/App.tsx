@@ -25,7 +25,7 @@ function App() {
   }
 
   return (
-    <Box minHeight="100vh" width="100%">
+    <Box minHeight="calc(100vh - 1px)" width="100%">
       <ToastContainer
         position="top-center"
         closeOnClick

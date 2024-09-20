@@ -1,24 +1,20 @@
 use crate::switchbot::api::{send_command, CommandBody, Parameter};
+use crate::switchbot::command::CommandFunctionParameter;
 
-#[derive(Debug)]
-pub struct Bot {
-    pub name: String,
-}
+pub async fn press<'a>(
+    CommandFunctionParameter {
+        token,
+        secret,
+        device_id,
+        option: _,
+    }: CommandFunctionParameter<'a>,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let command_body: CommandBody = CommandBody {
+        command: "press".to_string(),
+        command_type: "command".to_string(),
+        parameter: Parameter::Default,
+    };
 
-impl Bot {
-    pub async fn press(
-        &self,
-        device_id: &str,
-        token: &str,
-        secret: &str,
-    ) -> Result<(), Box<dyn std::error::Error>> {
-        let command_body: CommandBody = CommandBody {
-            command: "press".to_string(),
-            command_type: "command".to_string(),
-            parameter: Parameter::Default,
-        };
-
-        send_command(token, secret, device_id, command_body).await?;
-        Ok(())
-    }
+    send_command(token, secret, device_id, command_body).await?;
+    Ok(())
 }

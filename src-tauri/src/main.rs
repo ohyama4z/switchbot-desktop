@@ -94,9 +94,65 @@ pub(crate) async fn get_devices() -> Result<Vec<SwitchBotDevice>, String> {
     Ok(switchbot_devices)
 }
 
+// #[tauri::command(rename_all = "snake_case")]
+// fn bot_press(device_id: String) -> Result<(), String> {
+//     let api_key = get_api_key().map_err(|e| e.to_string())?;
+//     tauri::async_runtime::block_on(switchbot::bot::press(
+//         &device_id,
+//         &api_key.token,
+//         &api_key.secret,
+//     ))
+//     .map_err(|e| e.to_string())?;
+
+//     Ok(())
+// }
+
+#[tauri::command(rename_all = "snake_case")]
+fn light_turn_on(device_id: String) -> Result<(), String> {
+    let api_key = get_api_key().map_err(|e| e.to_string())?;
+    tauri::async_runtime::block_on(switchbot::light::turn_on(
+        &device_id,
+        &api_key.token,
+        &api_key.secret,
+    ))
+    .map_err(|e| e.to_string())?;
+    Ok(())
+}
+
+#[tauri::command(rename_all = "snake_case")]
+fn light_turn_off(device_id: String) -> Result<(), String> {
+    let api_key = get_api_key().map_err(|e| e.to_string())?;
+    tauri::async_runtime::block_on(switchbot::light::turn_off(
+        &device_id,
+        &api_key.token,
+        &api_key.secret,
+    ))
+    .map_err(|e| e.to_string())?;
+    Ok(())
+}
+
+#[tauri::command(rename_all = "snake_case")]
+fn lock_lock(device_id: String) -> Result<(), String> {
+    let api_key = get_api_key().map_err(|e| e.to_string())?;
+    tauri::async_runtime::block_on(switchbot::lock::lock(
+        &device_id,
+        &api_key.token,
+        &api_key.secret,
+    ))
+    .map_err(|e| e.to_string())?;
+    Ok(())
+}
+
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![save_api_key, get_devices])
+        .invoke_handler(tauri::generate_handler![
+            save_api_key,
+            get_devices,
+            bot_press,
+            light_turn_on,
+            light_turn_off,
+            lock_lock
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
