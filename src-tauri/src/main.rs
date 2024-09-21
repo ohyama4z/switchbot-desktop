@@ -7,14 +7,20 @@ use confy;
 use confy::ConfyError;
 use serde::{Deserialize, Serialize};
 use std::str::FromStr;
+use switchbot::{
+    bot::press,
+    command::{excuse_command, CommandFunction},
+    light::{turn_off, turn_on},
+    lock::{self, lock, unlock},
+};
 
 #[derive(Default, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-struct ApiKey {
-    token: String,
-    secret: String,
+pub struct ApiKey {
+    pub token: String,
+    pub secret: String,
 }
-fn get_api_key() -> Result<ApiKey, ConfyError> {
+pub fn get_api_key() -> Result<ApiKey, ConfyError> {
     return confy::load("switchbot-desktop", "switchbot-desktop");
 }
 
@@ -32,10 +38,10 @@ enum SwitchBotDeviceType {
     Light,
     Lock,
     Bot,
-    AirConditioner,
-    Fan,
-    Plug,
-    Hub,
+    // AirConditioner,
+    // Fan,
+    // Plug,
+    // Hub,
 }
 impl FromStr for SwitchBotDeviceType {
     type Err = String;
@@ -45,10 +51,10 @@ impl FromStr for SwitchBotDeviceType {
             "Light" => Ok(SwitchBotDeviceType::Light),
             "Smart Lock" => Ok(SwitchBotDeviceType::Lock),
             "Bot" => Ok(SwitchBotDeviceType::Bot),
-            "Air Conditioner" => Ok(SwitchBotDeviceType::AirConditioner),
-            "Fan" => Ok(SwitchBotDeviceType::Fan),
-            "Plug Mini (JP)" => Ok(SwitchBotDeviceType::Plug),
-            "Hub 2" => Ok(SwitchBotDeviceType::Hub),
+            // "Air Conditioner" => Ok(SwitchBotDeviceType::AirConditioner),
+            // "Fan" => Ok(SwitchBotDeviceType::Fan),
+            // "Plug Mini (JP)" => Ok(SwitchBotDeviceType::Plug),
+            // "Hub 2" => Ok(SwitchBotDeviceType::Hub),
             _ => Err(format!("Unknown SwitchBotDeviceType: {}", s)),
         }
     }
@@ -94,65 +100,42 @@ pub(crate) async fn get_devices() -> Result<Vec<SwitchBotDevice>, String> {
     Ok(switchbot_devices)
 }
 
-// #[tauri::command(rename_all = "snake_case")]
-// fn bot_press(device_id: String) -> Result<(), String> {
-//     let api_key = get_api_key().map_err(|e| e.to_string())?;
-//     tauri::async_runtime::block_on(switchbot::bot::press(
-//         &device_id,
-//         &api_key.token,
-//         &api_key.secret,
-//     ))
-//     .map_err(|e| e.to_string())?;
+#[tauri::command]
+pub(crate) async fn excuse(
+    device_id: String,
+    switch_bot_device: SwitchBotDeviceType,
+    command_name: String,
+    option: Option<switchbot::command::CommandOption>,
+) -> Result<(), String> {
+    let mut result: Result<(), String> = Err("Unknown command".to_string());
+    match switch_bot_device {
+        SwitchBotDeviceType::Bot => {
+            if command_name.as_str() == "press" {
+                result = excuse_command(device_id, press, option).await;
+            }
+        }
+        SwitchBotDeviceType::Light => {
+            if command_name.as_str() == "turn_on" {
+                result = excuse_command(device_id, turn_on, option).await;
+            } else if command_name.as_str() == "turn_off" {
+                result = excuse_command(device_id, turn_off, option).await;
+            }
+        }
+        SwitchBotDeviceType::Lock => {
+            if command_name.as_str() == "lock" {
+                result = excuse_command(device_id, lock, option).await;
+            } else if command_name.as_str() == "unlock" {
+                result = excuse_command(device_id, unlock, option).await;
+            }
+        }
+    }
 
-//     Ok(())
-// }
-
-#[tauri::command(rename_all = "snake_case")]
-fn light_turn_on(device_id: String) -> Result<(), String> {
-    let api_key = get_api_key().map_err(|e| e.to_string())?;
-    tauri::async_runtime::block_on(switchbot::light::turn_on(
-        &device_id,
-        &api_key.token,
-        &api_key.secret,
-    ))
-    .map_err(|e| e.to_string())?;
-    Ok(())
-}
-
-#[tauri::command(rename_all = "snake_case")]
-fn light_turn_off(device_id: String) -> Result<(), String> {
-    let api_key = get_api_key().map_err(|e| e.to_string())?;
-    tauri::async_runtime::block_on(switchbot::light::turn_off(
-        &device_id,
-        &api_key.token,
-        &api_key.secret,
-    ))
-    .map_err(|e| e.to_string())?;
-    Ok(())
-}
-
-#[tauri::command(rename_all = "snake_case")]
-fn lock_lock(device_id: String) -> Result<(), String> {
-    let api_key = get_api_key().map_err(|e| e.to_string())?;
-    tauri::async_runtime::block_on(switchbot::lock::lock(
-        &device_id,
-        &api_key.token,
-        &api_key.secret,
-    ))
-    .map_err(|e| e.to_string())?;
-    Ok(())
+    result
 }
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![
-            save_api_key,
-            get_devices,
-            bot_press,
-            light_turn_on,
-            light_turn_off,
-            lock_lock
-        ])
+        .invoke_handler(tauri::generate_handler![save_api_key, get_devices, excuse])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

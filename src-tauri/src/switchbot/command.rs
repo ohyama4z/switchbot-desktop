@@ -1,23 +1,26 @@
-use api::get_api_key;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug)]
-enum CommandOption {
+use super::super::get_api_key;
+use std::{future::Future, pin::Pin};
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub(crate) enum CommandOption {
     AirConditioner,
     Fan,
 }
 
 #[derive(Debug)]
-pub(crate) struct CommandFunctionParameter<'a> {
-    pub(crate) device_id: &'a str,
-    pub(crate) token: &'a str,
-    pub(crate) secret: &'a str,
+pub(crate) struct CommandFunctionParameter {
+    pub(crate) device_id: String,
+    pub(crate) token: String,
+    pub(crate) secret: String,
     pub(crate) option: Option<CommandOption>,
 }
 
-pub(crate) type CommandFunction =
-    async fn (CommandFunctionParameter) -> Result<(), Box<dyn std::error::Error>>;
+pub(crate) type CommandFunctionReturn =
+    Pin<Box<dyn Future<Output = Result<(), Box<dyn std::error::Error>>> + Send>>;
 
-enum CommandName {}
+pub(crate) type CommandFunction = fn(CommandFunctionParameter) -> CommandFunctionReturn;
 
 pub(crate) async fn excuse_command(
     device_id: String,
@@ -26,9 +29,9 @@ pub(crate) async fn excuse_command(
 ) -> Result<(), String> {
     let api_key = get_api_key().map_err(|e| e.to_string())?;
     tauri::async_runtime::block_on(command_function(CommandFunctionParameter {
-        device_id: &device_id,
-        token: &api_key.token,
-        secret: &api_key.secret,
+        device_id: device_id,
+        token: api_key.token,
+        secret: api_key.secret,
         option,
     }))
     .map_err(|e| e.to_string())?;

@@ -1,30 +1,42 @@
 use crate::switchbot::api::{send_command, CommandBody, Parameter};
+use crate::switchbot::command::{CommandFunctionParameter, CommandFunctionReturn};
 
-pub async fn lock(
-    device_id: &str,
-    token: &str,
-    secret: &str,
-) -> Result<(), Box<dyn std::error::Error>> {
+pub fn lock(
+    CommandFunctionParameter {
+        token,
+        secret,
+        device_id,
+        option: _,
+    }: CommandFunctionParameter,
+) -> CommandFunctionReturn {
     let command_body: CommandBody = CommandBody {
         command: "lock".to_string(),
         command_type: "command".to_string(),
         parameter: Parameter::Default,
     };
 
-    send_command(token, secret, device_id, command_body).await?;
-    Ok(())
+    Box::pin(async move {
+        send_command(&token, &secret, &device_id, command_body).await?;
+        Ok(())
+    })
 }
 
-pub async fn unlock(
-    device_id: &str,
-    token: &str,
-    secret: &str,
-) -> Result<(), Box<dyn std::error::Error>> {
+pub fn unlock(
+    CommandFunctionParameter {
+        token,
+        secret,
+        device_id,
+        option: _,
+    }: CommandFunctionParameter,
+) -> CommandFunctionReturn {
     let command_body: CommandBody = CommandBody {
         command: "unlock".to_string(),
         command_type: "command".to_string(),
         parameter: Parameter::Default,
     };
-    send_command(token, secret, device_id, command_body).await?;
-    Ok(())
+
+    Box::pin(async move {
+        send_command(&token, &secret, &device_id, command_body).await?;
+        Ok(())
+    })
 }
