@@ -2,17 +2,18 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod switchbot;
-
 use confy;
 use confy::ConfyError;
 use serde::{Deserialize, Serialize};
 use std::str::FromStr;
+use std::sync::Arc;
 use switchbot::{
     bot::press,
-    command::{excuse_command, CommandFunction},
+    command::excuse_command,
     light::{turn_off, turn_on},
-    lock::{self, lock, unlock},
+    lock::{lock, unlock},
 };
+use tauri::{CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu};
 
 #[derive(Default, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -135,6 +136,49 @@ pub(crate) async fn excuse(
 
 fn main() {
     tauri::Builder::default()
+        .setup(|app| {
+            let handle = Arc::new(app.handle());
+            SystemTray::new()
+                .with_id("main")
+                .with_menu(SystemTrayMenu::new().add_item(CustomMenuItem::new("quit", "Quit")))
+                .on_event(move |event| {
+                    let handle = Arc::clone(&handle);
+                    match event {
+                        SystemTrayEvent::MenuItemClick { id, .. } => {
+                            if id == "quit" {
+                                let tray_handle = handle.tray_handle_by_id("main").unwrap();
+                                tray_handle.destroy().unwrap();
+                                handle.exit(0);
+                            }
+                        }
+
+                        SystemTrayEvent::DoubleClick { .. } => {
+                            println!("Double click");
+                            let window = handle.get_window("main").unwrap();
+                            if !window.is_visible().unwrap() {
+                                window.show().unwrap();
+                            }
+                        }
+
+                        _ => {}
+                    }
+                })
+                .build(app)
+                .unwrap();
+            Ok(())
+        })
+        .on_window_event(|event| {
+            // ウィンドウの非表示
+            match event.event() {
+                tauri::WindowEvent::CloseRequested { api, .. } => {
+                    println!("CloseRequested");
+                    event.window().hide().unwrap();
+                    api.prevent_close();
+                }
+
+                _ => {}
+            }
+        })
         .invoke_handler(tauri::generate_handler![save_api_key, get_devices, excuse])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

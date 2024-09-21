@@ -20,6 +20,8 @@
     "windows": [
       {
         "title": "switchbot-desktop",
+        "label": "main",
+        "visible": false,
         "width": 800,
         "height": 600
       }
@@ -38,6 +40,10 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ]
+    },
+    "systemTray": {
+      "iconPath": "icons/32x32.png",
+      "iconAsTemplate": true
     }
   }
 }
