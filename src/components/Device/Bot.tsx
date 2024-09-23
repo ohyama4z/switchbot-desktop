@@ -26,7 +26,7 @@ export const Bot: SwitchBotDeviceCompoennt = ({ device }) => {
       <Box>
         <Button
           onClick={press}
-          className={state.loading ? "button is-primary is-loading" : "button is-primary"}
+          className={`button is-primary is-small ${state.loading ? "is-loading" : ""}`}
         >Press</Button>
       </Box>
     </Flex>

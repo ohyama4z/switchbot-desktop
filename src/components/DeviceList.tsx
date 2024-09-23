@@ -12,7 +12,7 @@ export default function DeviceList({ devices }: Props) {
   })
 
   return (
-    <Flex flexWrap="wrap" columnGap="2rem">
+    <Flex flexWrap="wrap" columnGap="1rem">
       {filteredDevices.map((device) => (
         <DeviceListItem key={device.deviceId} device={device} />
       ))}

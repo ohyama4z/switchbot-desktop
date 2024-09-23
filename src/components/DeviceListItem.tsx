@@ -40,7 +40,7 @@ export default function DeviceListItem({ device }: Props) {
   }
 
   return (
-    <Box className="box" width="10rem" height="12rem">
+    <Box className="box" width="7rem" height="10rem">
       <Text fontWeight="bold" textAlign="center">{deviceName(device.deviceName)}</Text>
       {selectDeviceComponent(device)}
     </Box>

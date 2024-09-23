@@ -40,13 +40,13 @@ export const Light: SwitchBotDeviceCompoennt = ({ device }) => {
   })
 
   return (
-    <VStack width="100%" height="100%" gap="1rem" justifyContent="center" alignItems="center">
+    <VStack width="100%" height="100%" gap="0.5rem" justifyContent="center" alignItems="center">
       <Box>
         
         <Button
           onClick={turnOn}
-          width="5.5rem"
-          className={`button is-primary ${turnOnState.loading && trunOffState.loading ? " is-loading" : ""}`}
+          width="4rem"
+          className={`button is-primary is-small ${turnOnState.loading && trunOffState.loading ? " is-loading" : ""}`}
         >
           <Box as="span" className="icon">
             <FontAwesomeIcon icon={faLightbulb} size="sm" />
@@ -58,8 +58,8 @@ export const Light: SwitchBotDeviceCompoennt = ({ device }) => {
       <Box>
         <Button
           onClick={turnOff}
-          width="5.5rem"
-          className={`button is-dark ${turnOnState.loading && trunOffState.loading ? " is-loading" : ""}`}
+          width="4rem"
+          className={`button is-dark is-small ${turnOnState.loading && trunOffState.loading ? " is-loading" : ""}`}
         >
           <Box as="span" className="icon">
             <FontAwesomeIcon icon={faBan} size="sm" />
