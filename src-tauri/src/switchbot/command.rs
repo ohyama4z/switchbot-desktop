@@ -22,18 +22,19 @@ pub(crate) type CommandFunctionReturn =
 
 pub(crate) type CommandFunction = fn(CommandFunctionParameter) -> CommandFunctionReturn;
 
-pub(crate) async fn excuse_command(
+pub(crate) async fn excute_command(
     device_id: String,
     command_function: CommandFunction,
     option: Option<CommandOption>,
 ) -> Result<(), String> {
     let api_key = get_api_key().map_err(|e| e.to_string())?;
-    tauri::async_runtime::block_on(command_function(CommandFunctionParameter {
+    command_function(CommandFunctionParameter {
         device_id: device_id,
         token: api_key.token,
         secret: api_key.secret,
         option,
-    }))
+    })
+    .await
     .map_err(|e| e.to_string())?;
 
     Ok(())

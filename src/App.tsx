@@ -8,10 +8,11 @@ import { useModal } from "./hooks/useModal.ts";
 import Form from "./components/Form.tsx";
 import Modal from "./components/Modal.tsx";
 import { useDevices } from "./hooks/useDevices.ts";
+import DeviceList from "./components/DeviceList.tsx";
 
 function App() {
   const { isModalOpen, openModal, closeModal } = useModal();
-  const devices = useDevices();
+  const { devices } = useDevices();
 
   const saveApiKey = async (token: string, secret: string) => {
     try {
@@ -25,7 +26,7 @@ function App() {
   }
 
   return (
-    <Box minHeight="calc(100vh - 1px)" width="100%">
+    <Box minHeight="100vh" width="100%" className="has-background-white-bis">
       <ToastContainer
         position="top-center"
         closeOnClick
@@ -39,8 +40,8 @@ function App() {
       <Box
         as="span"
         position="absolute"
-        top="2rem"
-        right="2rem"
+        top="3%"
+        right="1%"
         onClick={openModal}
         cursor="pointer"
         _hover={{ color: "hsl(171, 100%, 41%)" }}
@@ -48,8 +49,8 @@ function App() {
         <FontAwesomeIcon icon={faCog} className="icon" />
       </Box>
 
-      <Box padding="5%">
-        
+      <Box padding="3%">
+        <DeviceList devices={devices} />
       </Box>
     </Box>
   );

@@ -14,7 +14,6 @@ pub fn press(
         command_type: "command".to_string(),
         parameter: Parameter::Default,
     };
-
     Box::pin(async move {
         send_command(&token, &secret, &device_id, command_body).await?;
         Ok(())

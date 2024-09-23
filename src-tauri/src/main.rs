@@ -9,7 +9,7 @@ use std::str::FromStr;
 use std::sync::Arc;
 use switchbot::{
     bot::press,
-    command::excuse_command,
+    command::excute_command,
     light::{turn_off, turn_on},
     lock::{lock, unlock},
 };
@@ -34,15 +34,16 @@ fn save_api_key(api_key: ApiKey) -> Result<(), String> {
     }
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 enum SwitchBotDeviceType {
     Light,
     Lock,
     Bot,
-    // AirConditioner,
-    // Fan,
-    // Plug,
-    // Hub,
+    AirConditioner,
+    Fan,
+    Plug,
+    Hub,
+    Unknown,
 }
 impl FromStr for SwitchBotDeviceType {
     type Err = String;
@@ -52,24 +53,25 @@ impl FromStr for SwitchBotDeviceType {
             "Light" => Ok(SwitchBotDeviceType::Light),
             "Smart Lock" => Ok(SwitchBotDeviceType::Lock),
             "Bot" => Ok(SwitchBotDeviceType::Bot),
-            // "Air Conditioner" => Ok(SwitchBotDeviceType::AirConditioner),
-            // "Fan" => Ok(SwitchBotDeviceType::Fan),
-            // "Plug Mini (JP)" => Ok(SwitchBotDeviceType::Plug),
-            // "Hub 2" => Ok(SwitchBotDeviceType::Hub),
-            _ => Err(format!("Unknown SwitchBotDeviceType: {}", s)),
+            "Air Conditioner" => Ok(SwitchBotDeviceType::AirConditioner),
+            "Fan" => Ok(SwitchBotDeviceType::Fan),
+            "Plug Mini (JP)" => Ok(SwitchBotDeviceType::Plug),
+            "Hub 2" => Ok(SwitchBotDeviceType::Hub),
+            _ => Ok(SwitchBotDeviceType::Unknown),
         }
     }
 }
 
 // ユーザ視点から見た各機器をSwitchBotデバイスと呼称
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 struct SwitchBotDevice {
     device_id: String,
     device_name: String,
     device_type: SwitchBotDeviceType,
 }
 
-#[tauri::command(rename_all = "snake_case")]
+#[tauri::command]
 pub(crate) async fn get_devices() -> Result<Vec<SwitchBotDevice>, String> {
     let api_key = get_api_key().map_err(|e| e.to_string())?;
 
@@ -77,7 +79,7 @@ pub(crate) async fn get_devices() -> Result<Vec<SwitchBotDevice>, String> {
         .await
         .map_err(|e| e.to_string())?;
 
-    let mut switchbot_devices = vec![];
+    let mut switchbot_devices: Vec<SwitchBotDevice> = vec![];
     for device in devices.device_list {
         let device_type = SwitchBotDeviceType::from_str(&device.device_type)?;
         let switchbot_device = SwitchBotDevice {
@@ -102,7 +104,7 @@ pub(crate) async fn get_devices() -> Result<Vec<SwitchBotDevice>, String> {
 }
 
 #[tauri::command]
-pub(crate) async fn excuse(
+pub(crate) async fn excute(
     device_id: String,
     switch_bot_device: SwitchBotDeviceType,
     command_name: String,
@@ -112,29 +114,54 @@ pub(crate) async fn excuse(
     match switch_bot_device {
         SwitchBotDeviceType::Bot => {
             if command_name.as_str() == "press" {
-                result = excuse_command(device_id, press, option).await;
+                result = excute_command(device_id, press, option).await;
             }
         }
+
         SwitchBotDeviceType::Light => {
-            if command_name.as_str() == "turn_on" {
-                result = excuse_command(device_id, turn_on, option).await;
-            } else if command_name.as_str() == "turn_off" {
-                result = excuse_command(device_id, turn_off, option).await;
+            if command_name.as_str() == "turn-on" {
+                result = excute_command(device_id, turn_on, option).await;
+            } else if command_name.as_str() == "turn-off" {
+                result = excute_command(device_id, turn_off, option).await;
             }
         }
+
         SwitchBotDeviceType::Lock => {
             if command_name.as_str() == "lock" {
-                result = excuse_command(device_id, lock, option).await;
+                result = excute_command(device_id, lock, option).await;
             } else if command_name.as_str() == "unlock" {
-                result = excuse_command(device_id, unlock, option).await;
+                result = excute_command(device_id, unlock, option).await;
             }
+        }
+
+        SwitchBotDeviceType::AirConditioner => {
+            result = Err("Not implemented".to_string());
+        }
+
+        SwitchBotDeviceType::Fan => {
+            result = Err("Not implemented".to_string());
+        }
+
+        SwitchBotDeviceType::Plug => {
+            result = Err("Not implemented".to_string());
+        }
+
+        SwitchBotDeviceType::Hub => {
+            result = Err("Not implemented".to_string());
+        }
+
+        SwitchBotDeviceType::Unknown => {
+            result = Err("Unknown device type".to_string());
         }
     }
 
     result
 }
 
-fn main() {
+#[tokio::main]
+async fn main() {
+    tauri::async_runtime::set(tokio::runtime::Handle::current());
+
     tauri::Builder::default()
         .setup(|app| {
             let handle = Arc::new(app.handle());
@@ -153,7 +180,6 @@ fn main() {
                         }
 
                         SystemTrayEvent::DoubleClick { .. } => {
-                            println!("Double click");
                             let window = handle.get_window("main").unwrap();
                             if !window.is_visible().unwrap() {
                                 window.show().unwrap();
@@ -171,7 +197,6 @@ fn main() {
             // ウィンドウの非表示
             match event.event() {
                 tauri::WindowEvent::CloseRequested { api, .. } => {
-                    println!("CloseRequested");
                     event.window().hide().unwrap();
                     api.prevent_close();
                 }
@@ -179,7 +204,7 @@ fn main() {
                 _ => {}
             }
         })
-        .invoke_handler(tauri::generate_handler![save_api_key, get_devices, excuse])
+        .invoke_handler(tauri::generate_handler![save_api_key, get_devices, excute])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

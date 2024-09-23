@@ -97,7 +97,7 @@ pub(crate) async fn send_command(
     device_id: &str,
     body: CommandBody,
 ) -> Result<(), Box<dyn Error>> {
-    let url = format!("{}/devices/{}/command", SWITCHBOT_API_URL, device_id);
+    let url = format!("{}/devices/{}/commands", SWITCHBOT_API_URL, device_id);
     let headers = create_header(token, secret);
     let client = reqwest::Client::new();
 
@@ -107,7 +107,7 @@ pub(crate) async fn send_command(
         .json(&body)
         .send()
         .await?;
-    let _ = res.text().await?;
+    let text = res.text().await?;
 
     Ok(())
 }

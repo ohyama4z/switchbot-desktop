@@ -25,6 +25,7 @@ confy = { version = "0.6.1", features = [
   "yaml_conf",
 ], default-features = false }
 strum = { version = "0.26.3", features = ["derive"] }
+tokio = { version = "1.40.0", features = ["full"] }
 
 [features]
 # This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!

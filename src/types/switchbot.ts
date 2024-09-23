@@ -12,3 +12,14 @@ export type SwitchBotDevice = {
   deviceName: string
   deviceType: SwitchBotDeviceType
 }
+
+export type SwitchBotDeviceCompoennt = (props: {
+  device: SwitchBotDevice
+}) => JSX.Element
+
+export type ExcuteCommandParameter = {
+  deviceId: string
+  switchBotDevice: SwitchBotDeviceType
+  commandName: string
+  option: null | { [key in string]: string }
+}
