@@ -9,21 +9,28 @@ import Form from "./components/Form.tsx";
 import Modal from "./components/Modal.tsx";
 import { useDevices } from "./hooks/useDevices.ts";
 import DeviceList from "./components/DeviceList.tsx";
+import { useEffect } from "react";
 
 function App() {
   const { isModalOpen, openModal, closeModal } = useModal();
-  const { devices } = useDevices();
+  const { devices, refreshDevices } = useDevices();
 
   const saveApiKey = async (token: string, secret: string) => {
     try {
       await invoke("save_api_key", { "api_key": { token, secret } });
       toast.success("トークンの保存に成功しました!");
       setTimeout(closeModal, 750);
+      await refreshDevices();
+      console.log(devices);
     } catch (e) {
       console.error(e);
       toast.error("トークンの保存に失敗しました");
     }
   }
+
+  useEffect(() => {
+    console.log(devices);
+  }, [devices]);
 
   return (
     <Box minHeight="100vh" width="100%" className="has-background-white-bis">
@@ -33,7 +40,7 @@ function App() {
         theme="colored"
         autoClose={2000}
       />
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
+      <Modal isOpen={isModalOpen} onClose={closeModal}> 
         <Form saveApiKey={saveApiKey} />
       </Modal>
 

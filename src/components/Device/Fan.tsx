@@ -64,7 +64,7 @@ export const Fan: SwitchBotDeviceCompoennt = ({ device }) => {
       toast.error("コマンドの送信に失敗しました")
     }
 
-    setIsSwinging(!isSwinging)
+    setIsSwinging((isSwinging) => !isSwinging)
   }, [])
 
   const isLoading = togglePowerState.loading || changeSpeedState.loading || toggleSwingState.loading
@@ -93,7 +93,7 @@ export const Fan: SwitchBotDeviceCompoennt = ({ device }) => {
             width="2rem"
             height="2rem"
             borderRadius="50%"
-            className={`button is-small ${isPowerOn ? (isSwinging ? "is-primary"  : "is-primary  is-outlined") : "" } ${isLoading ? "is-loading" : ""}`}
+            className={`button is-small ${isPowerOn ? (isSwinging ? "is-primary"  : "is-primary is-outlined") : "" } ${isLoading ? "is-loading" : ""}`}
             disabled={!isPowerOn}
           >
             <Box as="span" className="icon">
