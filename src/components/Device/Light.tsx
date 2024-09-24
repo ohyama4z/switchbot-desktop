@@ -46,7 +46,7 @@ export const Light: SwitchBotDeviceCompoennt = ({ device }) => {
         <Button
           onClick={turnOn}
           width="4rem"
-          className={`button is-primary is-small ${turnOnState.loading && trunOffState.loading ? " is-loading" : ""}`}
+          className={`button is-primary is-small ${turnOnState.loading || trunOffState.loading ? "is-loading" : ""}`}
         >
           <Box as="span" className="icon">
             <FontAwesomeIcon icon={faLightbulb} size="sm" />
@@ -59,7 +59,7 @@ export const Light: SwitchBotDeviceCompoennt = ({ device }) => {
         <Button
           onClick={turnOff}
           width="4rem"
-          className={`button is-dark is-small ${turnOnState.loading && trunOffState.loading ? " is-loading" : ""}`}
+          className={`button is-dark is-small ${turnOnState.loading || trunOffState.loading ? "is-loading" : ""}`}
         >
           <Box as="span" className="icon">
             <FontAwesomeIcon icon={faBan} size="sm" />

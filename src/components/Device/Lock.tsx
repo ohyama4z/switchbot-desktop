@@ -46,7 +46,7 @@ export const Lock: SwitchBotDeviceCompoennt = ({ device }) => {
         <Button
           onClick={lock}
           width="4rem"
-          className={`button is-primary is-small ${lockState.loading && unlockState.loading ? "is-loading" : ""}`}
+          className={`button is-primary is-small ${lockState.loading || unlockState.loading ? "is-loading" : ""}`}
         >
           <Box as="span" className="icon">
             <FontAwesomeIcon icon={faLock} size="sm" />
@@ -59,7 +59,7 @@ export const Lock: SwitchBotDeviceCompoennt = ({ device }) => {
         <Button
           onClick={unlock}
           width="4rem"
-          className={`button is-dark is-small ${lockState.loading && unlockState.loading ? "is-loading" : ""}`}
+          className={`button is-dark is-small ${lockState.loading || unlockState.loading ? "is-loading" : ""}`}
         >
           <Box as="span" className="icon">
             <FontAwesomeIcon icon={faLockOpen} size="sm" />
