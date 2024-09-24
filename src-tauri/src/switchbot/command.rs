@@ -4,10 +4,7 @@ use super::super::get_api_key;
 use std::{future::Future, pin::Pin};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub(crate) enum CommandOption {
-    AirConditioner,
-    Fan,
-}
+pub(crate) enum CommandOption {}
 
 #[derive(Debug)]
 pub(crate) struct CommandFunctionParameter {

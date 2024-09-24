@@ -107,7 +107,7 @@ pub(crate) async fn send_command(
         .json(&body)
         .send()
         .await?;
-    let text = res.text().await?;
+    let _ = res.text().await?;
 
     Ok(())
 }

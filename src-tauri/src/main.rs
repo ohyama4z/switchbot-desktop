@@ -139,7 +139,13 @@ pub(crate) async fn excute(
         }
 
         SwitchBotDeviceType::Fan => {
-            result = Err("Not implemented".to_string());
+            if command_name.as_str() == "toggle-power" {
+                result = excute_command(device_id, switchbot::fan::toggle_power, option).await;
+            } else if command_name.as_str() == "change-speed" {
+                result = excute_command(device_id, switchbot::fan::change_speed, option).await;
+            } else if command_name.as_str() == "toggle-swing" {
+                result = excute_command(device_id, switchbot::fan::toggle_swing, option).await;
+            }
         }
 
         SwitchBotDeviceType::Plug => {
