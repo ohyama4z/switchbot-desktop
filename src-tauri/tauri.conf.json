@@ -22,8 +22,8 @@
         "title": "switchbot-desktop",
         "label": "main",
         "visible": false,
-        "width": 550,
-        "height": 215
+        "width": 420,
+        "height": 370
       }
     ],
     "security": {
