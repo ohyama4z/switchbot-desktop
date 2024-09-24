@@ -1,4 +1,4 @@
-import { Box, Button, Flex, HStack, VStack } from "@kuma-ui/core";
+import { Box, Button, HStack, VStack } from "@kuma-ui/core";
 import { useAsyncFn, useToggle } from "react-use";
 import { invoke } from "@tauri-apps/api";
 import { SwitchBotDeviceCompoennt, ExcuteCommandParameter } from "../../types/switchbot";
