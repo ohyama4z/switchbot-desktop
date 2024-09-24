@@ -3,6 +3,7 @@ import { SwitchBotDevice } from "../types/switchbot";
 import { Bot } from "./Device/Bot";
 import { Lock } from "./Device/Lock";
 import { Light } from "./Device/Light";
+import { Fan } from "./Device/Fan";
 
 
 type Props = {
@@ -26,10 +27,10 @@ export default function DeviceListItem({ device }: Props) {
         return <Light device={selectedDevice} />
       case "Lock":
         return <Lock device={selectedDevice} />
+      case "Fan":
+        return <Fan device={selectedDevice} />
       case "AirConditioner":
         return <Box>AirConditioner</Box>
-      case "Fan":
-        return <Box>Fan</Box>
       case "Plug":
         return <Box>Plug</Box>
       case "Hub":

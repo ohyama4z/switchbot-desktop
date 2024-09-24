@@ -41,30 +41,30 @@ export const Lock: SwitchBotDeviceCompoennt = ({ device }) => {
 
   return (
     <VStack width="100%" height="100%" gap="0.5rem" justifyContent="center" alignItems="center">
-      <Box>
-        
-        <Button
-          onClick={lock}
-          width="4rem"
-          className={`button is-primary is-small ${lockState.loading || unlockState.loading ? "is-loading" : ""}`}
-        >
-          <Box as="span" className="icon">
-            <FontAwesomeIcon icon={faLock} size="sm" />
-          </Box>
-          <Box as="span">Lock</Box>
-        </Button>
-      </Box>
 
       <Box>
         <Button
           onClick={unlock}
           width="4rem"
-          className={`button is-dark is-small ${lockState.loading || unlockState.loading ? "is-loading" : ""}`}
+          className={`button is-primary is-small ${lockState.loading || unlockState.loading ? "is-loading" : ""}`}
         >
           <Box as="span" className="icon">
             <FontAwesomeIcon icon={faLockOpen} size="sm" />
           </Box>
-          <Box as="span">Unlock</Box>
+          <Box as="span">Open</Box>
+        </Button>
+      </Box>
+
+      <Box>
+        <Button
+          onClick={lock}
+          width="4rem"
+          className={`button is-dark is-small ${lockState.loading || unlockState.loading ? "is-loading" : ""}`}
+        >
+          <Box as="span" className="icon">
+            <FontAwesomeIcon icon={faLock} size="sm" />
+          </Box>
+          <Box as="span">Close</Box>
         </Button>
       </Box>
     </VStack>

@@ -8,7 +8,7 @@ type Props = {
 
 export default function DeviceList({ devices }: Props) {
   const filteredDevices = devices.filter(device => {
-    return device.deviceType === "Bot" || device.deviceType === "Light" || device.deviceType === "Lock"
+    return device.deviceType === "Bot" || device.deviceType === "Light" || device.deviceType === "Lock" || device.deviceType === "Fan"
   })
 
   return (
