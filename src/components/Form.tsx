@@ -15,20 +15,20 @@ export default function Form({ saveApiKey }: Props) {
   }
 
   return (
-    <VStack as="form" onSubmit={saveApiKeyHandler} width="20rem">
+    <VStack as="form" onSubmit={saveApiKeyHandler} width="100%">
       <Box>
-        <Box as="label" display="inline-block" htmlFor="token" width="4rem" className="label">Token: </Box>
-        <Input type="text" name="token" width="16rem" height="1.5rem" className="input" />
+        <Box as="label" display="inline-block" htmlFor="token" width="20%" className="label">Token: </Box>
+        <Input type="text" name="token" width="80%" height="1.5rem" className="input" />
       </Box>
       <Spacer size="0.5rem" />
       <Box>
-        <Box as="label" display="inline-block" htmlFor="secret" width="4rem" className="label">Secret: </Box>
-        <Input type="text" name="secret" width="16rem" height="1.5rem" className="input" />
+        <Box as="label" display="inline-block" htmlFor="secret" width="20%" className="label">Secret: </Box>
+        <Input type="text" name="secret" width="80%" height="1.5rem" className="input" />
       </Box>
       <Spacer size="0.5rem" />
       <Box>
         <Flex flexDirection="row-reverse">
-          <Button type="submit" className="button is-primary">Save</Button>
+          <Button type="submit" className="button is-primary is-small">Save</Button>
         </Flex>
       </Box>
     </VStack>
